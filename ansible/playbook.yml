@@ -9,8 +9,10 @@
     db_user: fitness_admin
     db_password: "SecurePass123!"
     backup_dir: /var/backups/fitness
+    ansible_user: "{{ lookup('env', 'USER') }}"
 
   roles:
+    - docker
     - postgresql
     - erpnext
     - backup

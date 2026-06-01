@@ -1,22 +1,27 @@
 ---
-- name: Install ERPNext dependencies
-  dnf:
-    name:
-      - git
-      - python3-pip
-      - python3-devel
-      - redis
-      - nodejs
-      - npm
-      - gcc
-      - make
-      - libffi-devel
-      - openssl-devel
-    state: present
+- name: Check if ERPNext is already initialized
+  stat:
+    path: /opt/erpnext/.initialized
+  register: erpnext_initialized
 
-- name: Install frappe-bench via pip
-  pip:
-    name:
-      - frappe-bench
-    state: latest
-    executable: pip3
+- name: Pull and start ERPNext with Docker Compose v2
+  community.docker.docker_compose_v2:
+    project_src: /opt/erpnext
+    state: present
+  register: erpnext_started
+
+- name: Wait for ERPNext web to be ready
+  uri:
+    url: http://localhost:8080
+    status_code: 200,302,301
+  register: web_check
+  until: web_check.status in [200, 302, 301]
+  retries: 30
+  delay: 10
+  when: erpnext_started.changed
+
+- name: Mark ERPNext as initialized
+  file:
+    path: /opt/erpnext/.initialized
+    state: touch
+  when: not erpnext_initialized.stat.exists
