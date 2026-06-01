@@ -3,25 +3,24 @@
 
 title Диаграмма развёртывания системы фитнес-клуба
 
-' Внешние сущности
 actor "Клиент" as Client
 actor "Администратор" as Admin
 
-' Внешние сервисы
+
 cloud "Интернет" as Internet
 cloud "Email SMTP" as Email
 cloud "Telegram Bot API" as Telegram
 
-' Брандмауэр
+
 node "Брандмауэр (firewalld)\nПорты: 8080, 5432" as Firewall
 
-' Сервер
+
 node "Сервер Fedora Linux" as Server {
     
-    ' База данных
+    
     database "PostgreSQL 15\nfitness_db" as PG
     
-    ' Docker контейнеры
+    
     node "Docker окружение" as Docker {
         database "MariaDB" as Maria
         database "Redis Cache" as RedisCache
@@ -30,17 +29,17 @@ node "Сервер Fedora Linux" as Server {
         node "Nginx\n:8080" as Nginx
     }
     
-    ' Автоматизация
+    
     node "Ansible\n(автоматическая\nустановка)" as Ansible
     
-    ' Бэкапы
+    
     node "Backup система" as Backup {
         node "Python скрипт\nbackup.py" as PyBackup
         node "Cron\n(ежедневно 2:00)" as Cron
     }
 }
 
-' Связи
+
 Client --> Internet : HTTP
 Internet --> Firewall
 Firewall --> Nginx : порт 8080
@@ -56,7 +55,7 @@ PG --> PyBackup : данные
 PyBackup --> Cron : расписание
 Admin --> PG : управление
 
-' Цвета
+
 skinparam node {
     BackgroundColor LightBlue
     BorderColor DarkBlue
