@@ -1,0 +1,22 @@
+---
+- name: Install ERPNext dependencies
+  dnf:
+    name:
+      - git
+      - python3-pip
+      - python3-devel
+      - redis
+      - nodejs
+      - npm
+      - gcc
+      - make
+      - libffi-devel
+      - openssl-devel
+    state: present
+
+- name: Install frappe-bench via pip
+  pip:
+    name:
+      - frappe-bench
+    state: latest
+    executable: pip3

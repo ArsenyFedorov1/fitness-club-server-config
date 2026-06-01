@@ -1,0 +1,16 @@
+---
+- name: Configure Fitness Club Server
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    postgresql_version: 15
+    db_name: fitness_db
+    db_user: fitness_admin
+    db_password: "SecurePass123!"
+    backup_dir: /var/backups/fitness
+
+  roles:
+    - postgresql
+    - erpnext
+    - backup

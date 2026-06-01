@@ -1,0 +1,22 @@
+---
+- name: Create backup directory
+  file:
+    path: "{{ backup_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Copy backup script
+  copy:
+    src: backup.py
+    dest: /usr/local/bin/backup.py
+    mode: '0755'
+
+- name: Setup cron job for daily backup at 2 AM
+  cron:
+    name: "Fitness DB backup"
+    hour: 2
+    minute: 0
+    job: "/usr/bin/python3 /usr/local/bin/backup.py"
+    user: root
